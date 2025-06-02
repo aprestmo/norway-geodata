@@ -142,11 +142,11 @@ export function getMunicipalitiesByCounty(countyId: string): Municipality[] {
  * @throws {TypeError} If postal code is not a valid number
  */
 export function getMunicipalityByPostalCode(postalCode: string | number): Municipality | undefined {
-  const code = Number(postalCode);
-  if (isNaN(code)) {
-    throw new TypeError('Postal code must be a valid number');
+  const code = String(postalCode);
+  if (!code.match(/^\d{4}$/)) {
+    throw new TypeError('Postal code must be a valid 4-digit number');
   }
-  return municipalities.find(m => m.k_postal_codes.includes(code));
+  return municipalities.find(m => m.k_postal_codes.some(pc => pc.zip === code));
 }
 
 /**
@@ -156,7 +156,7 @@ export function getMunicipalityByPostalCode(postalCode: string | number): Munici
  */
 export function getPostalCodesByMunicipality(municipalityId: string): readonly number[] | undefined {
   const municipality = getMunicipalityById(municipalityId);
-  return municipality ? municipality.k_postal_codes : undefined;
+  return municipality ? municipality.k_postal_codes.map(pc => pc.zip) : undefined;
 }
 
 /**
