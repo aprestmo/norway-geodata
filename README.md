@@ -1,36 +1,43 @@
-# Norway Geodata
+# 🇳🇴 Norway Geodata
 
-📍 Administrative geographic data for Norway including municipalities (kommuner), counties (fylker), and postal codes.
+📍 Complete administrative geographic data for Norway (2025) with TypeScript support - municipalities, counties, postal codes, and 25+ utility functions.
 
-## Features
+[![npm version](https://img.shields.io/npm/v/@aprestmo/norway-geodata)](https://www.npmjs.com/package/@aprestmo/norway-geodata)
+[![npm downloads](https://img.shields.io/npm/dm/@aprestmo/norway-geodata)](https://www.npmjs.com/package/@aprestmo/norway-geodata)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- **Complete Norwegian geodata** for 2025
-- **Full TypeScript support** with strict type safety
-- **Semantic versioning** with automatic npm publishing
-- **Comprehensive API** with 25+ functions for search, filtering, and statistics
-- **Data validation** with automated CI/CD workflows
-- **Zero runtime dependencies** - lightweight and fast
+## ✨ Features
 
-## Installation
+- 🏛️ **Complete 2025 data** - All Norwegian municipalities and counties
+- 🔒 **TypeScript first** - Full type safety and IntelliSense support
+- 🚀 **Zero dependencies** - Lightweight and fast
+- 🔍 **Rich search API** - 25+ functions for filtering and statistics
+- 📦 **Multiple registries** - Available on npm and GitHub Packages
 
-### From npm (recommended)
+## 📦 Installation
+
 ```bash
 npm install @aprestmo/norway-geodata
 ```
 
-### From GitHub Packages
+<details>
+<summary>Alternative: GitHub Packages</summary>
+
 ```bash
-# Configure npm to use GitHub Packages for @aprestmo scope
+# Configure npm for GitHub Packages
 npm config set @aprestmo:registry https://npm.pkg.github.com
 npm config set //npm.pkg.github.com/:_authToken YOUR_GITHUB_TOKEN
 
-# Install the package
+# Install
 npm install @aprestmo/norway-geodata
 ```
 
-Note: For GitHub Packages, you need a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with `read:packages` permission.
+> Requires a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with `read:packages` permission.
 
-## Usage
+</details>
+
+## 🚀 Quick Start
 
 ```typescript
 import {
@@ -38,37 +45,24 @@ import {
   getCounties,
   getMunicipalityById,
   getMunicipalitiesByName,
-  getVersion,
   type Municipality,
-  type County,
-  type MunicipalitySearchOptions
+  type County
 } from '@aprestmo/norway-geodata';
 
-// Get version info
-console.log('Library version:', getVersion());
-
-// Get all municipalities with full type safety
-const municipalities: readonly Municipality[] = getMunicipalities();
+// Get all municipalities
+const municipalities = getMunicipalities();
 console.log(`Found ${municipalities.length} municipalities`);
 
-// Get Oslo municipality with type safety
-const oslo: Municipality | undefined = getMunicipalityById('0301');
-if (oslo) {
-  console.log('Oslo population:', oslo.k_population);
-  console.log('Oslo postal codes:', oslo.k_postal_codes.length);
-}
+// Find Oslo
+const oslo = getMunicipalityById('0301');
+console.log('Oslo population:', oslo?.k_population);
 
-// Advanced search with typed options
-const searchOptions: MunicipalitySearchOptions = {
-  exactMatch: false,
-  caseSensitive: false,
-  includeAllNames: true
-};
-const bergMunicipalities = getMunicipalitiesByName('berg', searchOptions);
-console.log('Municipalities with "berg" in name:', bergMunicipalities.length);
+// Search municipalities
+const bergMunicipalities = getMunicipalitiesByName('berg');
+console.log('Found:', bergMunicipalities.length);
 
-// Type-safe county operations
-const counties: readonly County[] = getCounties();
+// Get all counties
+const counties = getCounties();
 console.log(`Found ${counties.length} counties`);
 ```
 
@@ -121,144 +115,95 @@ import type {
 } from '@aprestmo/norway-geodata';
 ```
 
-## Semantic Versioning & Automatic Publishing
+## 🎯 TypeScript Support
 
-This package uses **semantic versioning** with automated npm publishing through GitHub Actions:
+Full TypeScript support with strict type safety:
 
-### Version Bump Rules
+```typescript
+import type {
+  Municipality,
+  County,
+  LanguageStatus,
+  MunicipalitySearchOptions,
+  MunicipalityFilterOptions
+} from '@aprestmo/norway-geodata';
 
-- **Data changes** (`data/*.json`) → **Minor version** bump (e.g., 1.0.0 → 1.1.0)
-- **Code changes** (`src/*.js`) → **Patch version** bump (e.g., 1.0.0 → 1.0.1)
-- **Manual releases** → **Configurable** (patch, minor, major, prerelease)
+// Type-safe operations
+const oslo: Municipality | undefined = getMunicipalityById('0301');
+if (oslo) {
+  // Full IntelliSense support
+  console.log(oslo.k_name);       // string
+  console.log(oslo.k_population); // number
+  console.log(oslo.k_postal_codes); // readonly number[]
+}
+```
 
-### Automatic Publishing Triggers
+## 📊 Data Types
 
-1. **Push to main/master** with changes to:
-   - `data/**/*.json` files
-   - `src/**/*.js` files
-   - `package.json`
-
-2. **Manual trigger** via GitHub Actions with version type selection
-
-### Workflow Features
-
-- ✅ **Data validation** - Validates JSON structure and API compatibility
-- 🔍 **Change detection** - Automatically determines appropriate version bump
-- 📝 **Changelog generation** - Creates release notes
-- 🏷️ **Git tagging** - Creates semantic version tags
-- 📦 **NPM publishing** - Publishes to npm with provenance
-- 🚀 **GitHub releases** - Creates GitHub releases with changelogs
-- 🔒 **Security** - Uses npm provenance for supply chain security
-
-### Manual Release
-
-To manually trigger a release:
-
-1. Go to **Actions** tab in GitHub
-2. Select **Auto Publish to NPM** workflow
-3. Click **Run workflow**
-4. Choose version bump type:
-   - `patch` - Bug fixes (1.0.0 → 1.0.1)
-   - `minor` - New features (1.0.0 → 1.1.0)
-   - `major` - Breaking changes (1.0.0 → 2.0.0)
-   - `prerelease` - Pre-release (1.0.0 → 1.0.1-0)
-
-## Data Structure
-
-### Municipality Interface (TypeScript)
+### Municipality
 ```typescript
 interface Municipality {
-  readonly k_id: string;                    // 4-digit municipality ID
-  readonly k_name: string;                  // Municipality name
-  readonly k_name_no: string;               // Municipality name in Norwegian
-  readonly k_adm_center: string;            // Administrative center
-  readonly k_population: number;            // Population count
-  readonly k_area: number;                  // Area in square kilometers
-  readonly k_language: LanguageStatus;      // Official language status
-  readonly k_url: string;                   // Official website
-  readonly k_postal_codes: readonly number[]; // Array of postal codes
+  readonly k_id: string;                    // "0301" (Oslo)
+  readonly k_name: string;                  // "Oslo"
+  readonly k_name_no: string;               // "Oslo"
+  readonly k_adm_center: string;            // "Oslo"
+  readonly k_population: number;            // 709037
+  readonly k_area: number;                  // 454.07
+  readonly k_language: LanguageStatus;      // "Nøytral"
+  readonly k_url: string;                   // "https://oslo.kommune.no"
+  readonly k_postal_codes: readonly number[]; // [179, 180, 181, ...]
 }
 ```
 
-### County Interface (TypeScript)
+### County
 ```typescript
 interface County {
-  readonly f_id: string;    // 2-digit county ID
-  readonly f_name: string;  // County name
-  readonly f_url: string;   // Official website
+  readonly f_id: string;    // "03" (Oslo)
+  readonly f_name: string;  // "Oslo"
+  readonly f_url: string;   // "https://oslo.fylkeskommune.no"
 }
 ```
 
-### Language Status Type
-```typescript
-type LanguageStatus = 'Nøytral' | 'Bokmål' | 'Nynorsk' | 'Sami' | 'Kvensk';
-```
-
-### Search and Filter Options
+### Options
 ```typescript
 interface MunicipalitySearchOptions {
-  readonly includeAllNames?: boolean;   // Search both English and Norwegian names
-  readonly caseSensitive?: boolean;     // Case sensitive search
+  readonly includeAllNames?: boolean;   // Search both EN/NO names
+  readonly caseSensitive?: boolean;     // Case sensitive
   readonly exactMatch?: boolean;        // Exact match only
 }
 
 interface MunicipalityFilterOptions {
-  readonly minPopulation?: number;      // Minimum population
-  readonly maxPopulation?: number;      // Maximum population
-  readonly minArea?: number;            // Minimum area (km²)
-  readonly maxArea?: number;            // Maximum area (km²)
-  readonly language?: LanguageStatus;   // Language status
-  readonly countyId?: string;           // County ID
+  readonly minPopulation?: number;
+  readonly maxPopulation?: number;
+  readonly minArea?: number;            // km²
+  readonly maxArea?: number;            // km²
+  readonly language?: LanguageStatus;
+  readonly countyId?: string;
 }
+
+type LanguageStatus = 'Nøytral' | 'Bokmål' | 'Nynorsk' | 'Sami' | 'Kvensk';
 ```
 
-## Development
+## 🤝 Contributing
 
-### Setup
+Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
 
-```bash
-git clone https://github.com/aprestmo/norway-geodata.git
-cd norway-geodata
-npm install
-```
-
-### Scripts
-
-```bash
-npm run build        # Compile TypeScript to JavaScript
-npm run build:watch  # Watch mode compilation
-npm run clean        # Clean dist folder
-npm test             # Build and run validation tests
-npm run test:types   # TypeScript type checking only
-npm run validate     # Validate JSON files
-npm run dev          # Development mode (watch compilation)
-```
-
-### Contributing
-
+### Quick Start
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch  
 3. Make your changes
-4. Ensure tests pass: `npm test`
-5. Create a pull request
+4. Create a pull request
 
-The automated workflows will:
-- **TypeScript compilation** and type checking
-- **Data structure validation** and API compatibility testing
-- **Automated npm publishing** on merge to main
-- **GitHub releases** with changelogs
+All contributions go through automated validation and testing.
 
-## License
+## 📄 License
 
-MIT License - see LICENSE file for details.
+MIT License - see [LICENSE](./LICENSE) file for details.
 
-## Data Sources
+## 📊 Package Info
 
-Norwegian administrative data for 2025.
-
----
-
-📦 **Package**: [@aprestmo/norway-geodata](https://www.npmjs.com/package/@aprestmo/norway-geodata)  
-🏷️ **Version**: ![npm version](https://img.shields.io/npm/v/@aprestmo/norway-geodata)  
-📊 **Downloads**: ![npm downloads](https://img.shields.io/npm/dm/@aprestmo/norway-geodata)
+- **npm**: [@aprestmo/norway-geodata](https://www.npmjs.com/package/@aprestmo/norway-geodata)
+- **GitHub**: [aprestmo/norway-geodata](https://github.com/aprestmo/norway-geodata)
+- **Data**: Norwegian administrative data (2025)
+- **License**: MIT
 
