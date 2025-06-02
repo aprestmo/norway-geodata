@@ -23,8 +23,13 @@ export interface Municipality {
   readonly k_language: LanguageStatus;
   /** Official website URL */
   readonly k_url: string;
-  /** Array of postal codes */
-  readonly k_postal_codes: readonly number[];
+  /** Array of postal codes with place names */
+  readonly k_postal_codes: readonly {
+    /** 4-digit postal code */
+    readonly zip: string;
+    /** Place name */
+    readonly place: string;
+  }[];
 }
 
 /**
