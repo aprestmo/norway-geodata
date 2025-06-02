@@ -1,6 +1,6 @@
 {
   "name": "@aprestmo/norway-geodata",
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1-alpha.3",
   "description": "Administrative geographic data for Norway including municipalities, counties, and postal codes.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
