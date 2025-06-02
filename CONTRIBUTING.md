@@ -7,10 +7,9 @@ Thank you for your interest in contributing to Norway Geodata! This document out
 This repository has **branch protection** enabled on the `main` branch to ensure code quality and stability:
 
 - ✅ **Pull requests required** - Direct pushes to `main` are blocked
-- ✅ **Code review required** - At least 1 approving review needed
-- ✅ **Status checks required** - All CI checks must pass
-- ✅ **Code owner review** - Changes require approval from code owners
-- ✅ **Up-to-date branches** - PRs must be up-to-date with main
+- ✅ **Status checks required** - All CI checks must pass before merge
+- ✅ **Up-to-date branches** - PRs must be current with main
+- ✅ **Automated validation** - PR validation workflow ensures quality
 
 ## 🚀 Development Workflow
 
@@ -103,12 +102,12 @@ gh pr create --title "feat: add new municipality search function" --body "Descri
    - ✅ Commit message format check
    - ✅ Package size impact analysis
 
-2. **Code Review Required**:
-   - At least 1 approving review from code owners
+2. **Automated Merge**:
    - All automated checks must pass
    - PR must be up-to-date with main branch
+   - Ready to merge once validation completes
 
-3. **After Approval and Merge**:
+3. **After Merge**:
    - Automatic version bump based on changes
    - Automatic publishing to npm and GitHub Packages
    - Automatic GitHub release creation
