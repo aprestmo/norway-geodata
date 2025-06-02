@@ -1,0 +1,98 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'data/**/*.json'
+      - 'src/**/*.ts'
+      - 'src/**/*.js'
+      - 'package.json'
+      - 'tsconfig.json'
+      - '.github/workflows/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    name: Validate PR Changes
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      
+      - name: Validate JSON files
+        run: |
+          echo "🔍 Validating JSON structure..."
+          for file in data/*.json; do
+            if [ -f "$file" ]; then
+              echo "Validating $file"
+              node -e "try { JSON.parse(require('fs').readFileSync('$file', 'utf8')); console.log('✅ $file is valid'); } catch(e) { console.error('❌ $file is invalid:', e.message); process.exit(1); }"
+            fi
+          done
+      
+      - name: TypeScript compilation check
+        run: |
+          echo "🔧 Checking TypeScript compilation..."
+          npm run build
+      
+      - name: Type checking
+        run: |
+          echo "🔍 Running TypeScript type checking..."
+          npm run test:types
+      
+      - name: API validation
+        run: |
+          echo "🧪 Validating API exports..."
+          npm test
+      
+      - name: Check for breaking changes
+        run: |
+          echo "🔍 Checking for potential breaking changes..."
+          # This is a simple check - you can make this more sophisticated
+          git diff origin/main..HEAD --name-only | grep -E "(src/types\.ts|src/index\.ts)" && echo "⚠️ Potential API changes detected" || echo "✅ No API changes detected"
+      
+      - name: Lint commit message
+        run: |
+          echo "📝 Checking commit message format..."
+          # Get the PR title (GitHub automatically uses this as merge commit message)
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if [[ "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|ci|build)(\(.+\))?: ]]; then
+            echo "✅ PR title follows conventional commit format"
+          else
+            echo "⚠️ PR title should follow conventional commit format: type(scope): description"
+            echo "Examples: feat: add new municipality search, fix: correct postal code validation"
+          fi
+      
+      - name: Size impact check
+        run: |
+          echo "📦 Checking package size impact..."
+          npm pack --dry-run
+          
+      - name: PR Summary
+        run: |
+          echo "## 📋 PR Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ JSON files validated" >> $GITHUB_STEP_SUMMARY
+          echo "✅ TypeScript compilation successful" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Type checking passed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ API exports validated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🚀 This PR is ready for review and merge!" >> $GITHUB_STEP_SUMMARY
+
