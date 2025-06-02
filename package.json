@@ -31,7 +31,6 @@
     "test:types": "tsc --noEmit",
     "validate": "node -e \"const fs = require('fs'); ['./data/kommuner-2025.json', './data/fylker-2025.json'].forEach(f => JSON.parse(fs.readFileSync(f, 'utf8'))); console.log('✅ JSON files valid');\"",
     "prepublishOnly": "npm run validate && npm run build && npm test",
-    "version": "echo \"Version updated\"",
     "dev": "npm run build:watch"
   },
   "files": [

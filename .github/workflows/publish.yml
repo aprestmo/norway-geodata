@@ -118,15 +118,14 @@ jobs:
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           echo "Current version: $CURRENT_VERSION"
           
-          # Bump version (suppress the custom version script output)
-          NEW_VERSION=$(npm version ${{ steps.version-type.outputs.type }} --no-git-tag-version 2>/dev/null | tail -n1)
+          # Bump version with clean output
+          npm version ${{ steps.version-type.outputs.type }} --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
           echo "New version: $NEW_VERSION"
           
-          # Remove 'v' prefix if present
-          NEW_VERSION=${NEW_VERSION#v}
-          
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+          # Set outputs
+          echo "version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=v${NEW_VERSION}" >> $GITHUB_OUTPUT
       
       - name: Generate changelog entry
         id: changelog
