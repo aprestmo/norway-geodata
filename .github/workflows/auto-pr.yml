@@ -20,6 +20,11 @@ jobs:
   auto-pr:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip-pr]')
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      repository-projects: read
     
     steps:
       - name: Checkout code
@@ -100,15 +105,30 @@ jobs:
       - name: Create Pull Request
         if: steps.check-pr.outputs.skip == 'false'
         run: |
-          gh pr create \
-            --title "${{ steps.pr-details.outputs.title }}" \
-            --body "${{ steps.pr-details.outputs.body }}" \
-            --base main \
-            --head "${{ steps.check-pr.outputs.branch }}"
+          # Create PR using GitHub API with proper JSON escaping
+          PR_TITLE="${{ steps.pr-details.outputs.title }}"
+          PR_BODY="${{ steps.pr-details.outputs.body }}"
+          PR_HEAD="${{ steps.check-pr.outputs.branch }}"
+          
+          # Escape JSON properly
+          PR_TITLE_JSON=$(echo "$PR_TITLE" | jq -R -s .)
+          PR_BODY_JSON=$(echo "$PR_BODY" | jq -R -s .)
+          PR_HEAD_JSON=$(echo "$PR_HEAD" | jq -R -s .)
+          
+          # Create the PR
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            https://api.github.com/repos/${{ github.repository }}/pulls \
+            -d "{
+              \"title\": $PR_TITLE_JSON,
+              \"body\": $PR_BODY_JSON,
+              \"head\": $PR_HEAD_JSON,
+              \"base\": \"main\"
+            }"
           
           echo "✅ Automatically created PR for branch ${{ steps.check-pr.outputs.branch }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Add labels
         if: steps.check-pr.outputs.skip == 'false'
