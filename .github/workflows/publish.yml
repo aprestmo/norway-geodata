@@ -1,0 +1,197 @@
+name: Auto Publish to NPM
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'data/**/*.json'
+      - 'src/**/*.ts'
+      - 'src/**/*.js'
+      - 'package.json'
+      - 'tsconfig.json'
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prerelease
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      data-changed: ${{ steps.changes.outputs.data }}
+      src-changed: ${{ steps.changes.outputs.src }}
+      package-changed: ${{ steps.changes.outputs.package }}
+      should-publish: ${{ steps.should-publish.outputs.result }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            data:
+              - 'data/**/*.json'
+            src:
+              - 'src/**/*.ts'
+              - 'src/**/*.js'
+              - 'tsconfig.json'
+            package:
+              - 'package.json'
+      
+      - name: Determine if should publish
+        id: should-publish
+        run: |
+          if [[ "${{ steps.changes.outputs.data }}" == "true" || "${{ steps.changes.outputs.src }}" == "true" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "result=true" >> $GITHUB_OUTPUT
+          else
+            echo "result=false" >> $GITHUB_OUTPUT
+          fi
+
+  publish:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.should-publish == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      
+      - name: Type check and build
+        run: |
+          npm run test:types
+          npm run build
+      
+      - name: Run tests (if available)
+        run: |
+          npm test
+        continue-on-error: false
+      
+      - name: Determine version bump type
+        id: version-type
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "type=${{ github.event.inputs.version_type }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.detect-changes.outputs.data }}" == "true" ]]; then
+            # Data changes typically warrant a minor version bump
+            echo "type=minor" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.detect-changes.outputs.src }}" == "true" ]]; then
+            # Code changes typically warrant a patch version bump
+            echo "type=patch" >> $GITHUB_OUTPUT
+          else
+            echo "type=patch" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Bump version
+        id: version-bump
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: $CURRENT_VERSION"
+          
+          # Bump version with clean output
+          npm version ${{ steps.version-type.outputs.type }} --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "New version: $NEW_VERSION"
+          
+          # Set outputs
+          echo "version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=v${NEW_VERSION}" >> $GITHUB_OUTPUT
+      
+      - name: Generate changelog entry
+        id: changelog
+        run: |
+          # Create a simple changelog entry
+          CHANGES=""
+          if [[ "${{ needs.detect-changes.outputs.data }}" == "true" ]]; then
+            CHANGES="$CHANGES\n- Updated Norwegian geodata (municipalities and/or counties)"
+          fi
+          if [[ "${{ needs.detect-changes.outputs.src }}" == "true" ]]; then
+            CHANGES="$CHANGES\n- Updated source code and API functions"
+          fi
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            CHANGES="$CHANGES\n- Manual release triggered"
+          fi
+          
+          # Save changelog to file
+          echo "## Version ${{ steps.version-bump.outputs.version }}" > CHANGELOG_ENTRY.md
+          echo "" >> CHANGELOG_ENTRY.md
+          echo -e "$CHANGES" >> CHANGELOG_ENTRY.md
+          
+          # Set output for use in commit message
+          echo "changes<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$CHANGES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Commit version bump
+        run: |
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.version-bump.outputs.version }}
+          
+          ${{ steps.changelog.outputs.changes }}"
+          git tag ${{ steps.version-bump.outputs.tag }}
+      
+      - name: Verify build artifacts
+        run: |
+          echo "Verifying TypeScript compilation..."
+          ls -la dist/
+          node -e "console.log('Testing compiled output...'); require('./dist/index.js'); console.log('✅ Compiled output works!');"
+      
+      - name: Publish to NPM
+        run: |
+          # Publish to npm
+          npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Push changes and tags
+        run: |
+          git push origin ${{ github.ref_name }}
+          git push origin ${{ steps.version-bump.outputs.tag }}
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version-bump.outputs.tag }}
+          release_name: Release ${{ steps.version-bump.outputs.version }}
+          body_path: CHANGELOG_ENTRY.md
+          draft: false
+          prerelease: ${{ contains(steps.version-bump.outputs.version, '-') }}
+      
+      - name: Notify success
+        run: |
+          echo "✅ Successfully published version ${{ steps.version-bump.outputs.version }} to NPM"
+          echo "📦 Package: https://www.npmjs.com/package/@aprestmo/norway-geodata"
+          echo "🏷️  Tag: ${{ steps.version-bump.outputs.tag }}"
+

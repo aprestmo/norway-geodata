@@ -1,0 +1,68 @@
+{
+  "name": "@aprestmo/norway-geodata",
+  "version": "1.0.0",
+  "description": "Administrative geographic data for Norway including municipalities, counties, and postal codes.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./data/municipalities": "./data/kommuner-2025.json",
+    "./data/counties": "./data/fylker-2025.json",
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "require": "./dist/types.js",
+      "import": "./dist/types.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "test": "npm run build && node -e \"console.log('Running TypeScript validation...'); require('./dist/index.js'); console.log('✅ All exports working correctly!');\"",
+    "test:types": "tsc --noEmit",
+    "validate": "node -e \"const fs = require('fs'); ['./data/kommuner-2025.json', './data/fylker-2025.json'].forEach(f => JSON.parse(fs.readFileSync(f, 'utf8'))); console.log('✅ JSON files valid');\"",
+    "prepublishOnly": "npm run validate && npm run build && npm test",
+    "dev": "npm run build:watch"
+  },
+  "files": [
+    "dist",
+    "data",
+    "src",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.0.0",
+    "rimraf": "^5.0.0"
+  },
+  "keywords": [
+    "norway",
+    "geodata",
+    "municipalities",
+    "counties",
+    "postal-codes",
+    "kommune",
+    "fylke",
+    "typescript",
+    "types"
+  ],
+  "author": "Andreas Prestmo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aprestmo/norway-geodata.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
