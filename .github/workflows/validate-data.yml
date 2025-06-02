@@ -1,0 +1,107 @@
+name: Validate Data
+
+on:
+  pull_request:
+    paths:
+      - 'data/**/*.json'
+      - 'src/**/*.ts'
+      - 'src/**/*.js'
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      
+      - name: Type check
+        run: npm run test:types
+      
+      - name: Build TypeScript
+        run: npm run build
+      
+      - name: Validate JSON files
+        run: |
+          echo "Validating JSON files..."
+          for file in data/*.json; do
+            echo "Validating $file"
+            if ! node -e "JSON.parse(require('fs').readFileSync('$file', 'utf8'))"; then
+              echo "❌ Invalid JSON in $file"
+              exit 1
+            fi
+            echo "✅ $file is valid JSON"
+          done
+      
+      - name: Test data structure
+        run: |
+          echo "Testing data structure and API functions..."
+          node -e "
+            const { getMunicipalities, getCounties, getVersion } = require('./dist/index.js');
+            
+            console.log('Testing basic functions...');
+            const municipalities = getMunicipalities();
+            const counties = getCounties();
+            const version = getVersion();
+            
+            console.log('Municipalities count:', municipalities.length);
+            console.log('Counties count:', counties.length);
+            console.log('Version:', version);
+            
+            // Validate required fields
+            console.log('Validating municipality structure...');
+            const firstMunicipality = municipalities[0];
+            const requiredMunicipalityFields = ['k_id', 'k_name', 'k_name_no', 'k_population', 'k_area', 'k_postal_codes'];
+            for (const field of requiredMunicipalityFields) {
+              if (!(field in firstMunicipality)) {
+                throw new Error('Missing required field: ' + field);
+              }
+            }
+            
+            console.log('Validating county structure...');
+            const firstCounty = counties[0];
+            const requiredCountyFields = ['f_id', 'f_name', 'f_url'];
+            for (const field of requiredCountyFields) {
+              if (!(field in firstCounty)) {
+                throw new Error('Missing required field: ' + field);
+              }
+            }
+            
+            console.log('✅ All validations passed!');
+          "
+      
+      - name: Check for data consistency
+        run: |
+          echo "Checking data consistency..."
+          node -e "
+            const { getMunicipalities, getCounties, getMunicipalitiesByCounty } = require('./dist/index.js');
+            
+            const municipalities = getMunicipalities();
+            const counties = getCounties();
+            
+            console.log('Checking municipality-county relationships...');
+            let totalMunicipalitiesInCounties = 0;
+            
+            for (const county of counties) {
+              const municipalitiesInCounty = getMunicipalitiesByCounty(county.f_id);
+              totalMunicipalitiesInCounties += municipalitiesInCounty.length;
+              console.log('County', county.f_name, '(' + county.f_id + '):', municipalitiesInCounty.length, 'municipalities');
+            }
+            
+            if (totalMunicipalitiesInCounties !== municipalities.length) {
+              throw new Error('Mismatch in municipality-county relationships');
+            }
+            
+            console.log('✅ Data consistency checks passed!');
+          "
+
