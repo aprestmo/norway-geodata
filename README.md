@@ -13,9 +13,22 @@
 
 ## Installation
 
+### From npm (recommended)
 ```bash
 npm install @aprestmo/norway-geodata
 ```
+
+### From GitHub Packages
+```bash
+# Configure npm to use GitHub Packages for @aprestmo scope
+npm config set @aprestmo:registry https://npm.pkg.github.com
+npm config set //npm.pkg.github.com/:_authToken YOUR_GITHUB_TOKEN
+
+# Install the package
+npm install @aprestmo/norway-geodata
+```
+
+Note: For GitHub Packages, you need a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with `read:packages` permission.
 
 ## Usage
 

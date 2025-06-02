@@ -66,6 +66,7 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      packages: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -172,6 +173,24 @@ jobs:
           npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Publish to GitHub Packages
+        run: |
+          # Configure npm for GitHub Packages
+          npm config set @aprestmo:registry https://npm.pkg.github.com
+          npm config set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+          
+          # Create a temporary package.json for GitHub Packages
+          cp package.json package.json.backup
+          npm pkg set publishConfig.registry="https://npm.pkg.github.com"
+          
+          # Publish to GitHub Packages
+          npm publish
+          
+          # Restore original package.json
+          mv package.json.backup package.json
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Push changes and tags
         run: |

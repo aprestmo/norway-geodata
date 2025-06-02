@@ -1,0 +1,51 @@
+name: Publish to GitHub Packages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish-gpr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@aprestmo'
+      
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Update package.json for GitHub Packages
+        run: |
+          # Create a temporary package.json for GitHub Packages
+          cp package.json package.json.backup
+          
+          # Update the name and registry for GitHub Packages
+          npm pkg set name="@aprestmo/norway-geodata"
+          npm pkg set publishConfig.registry="https://npm.pkg.github.com"
+      
+      - name: Publish to GitHub Packages
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Restore original package.json
+        run: mv package.json.backup package.json
+        if: always()
+
