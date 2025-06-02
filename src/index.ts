@@ -154,7 +154,7 @@ export function getMunicipalityByPostalCode(postalCode: string | number): Munici
  * @param municipalityId - 4-digit municipality ID
  * @returns Array of postal codes or undefined if municipality not found
  */
-export function getPostalCodesByMunicipality(municipalityId: string): readonly number[] | undefined {
+export function getPostalCodesByMunicipality(municipalityId: string): readonly string[] | undefined {
   const municipality = getMunicipalityById(municipalityId);
   return municipality ? municipality.k_postal_codes.map(pc => pc.zip) : undefined;
 }
