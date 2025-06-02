@@ -118,8 +118,8 @@ jobs:
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           echo "Current version: $CURRENT_VERSION"
           
-          # Bump version
-          NEW_VERSION=$(npm version ${{ steps.version-type.outputs.type }} --no-git-tag-version)
+          # Bump version (suppress the custom version script output)
+          NEW_VERSION=$(npm version ${{ steps.version-type.outputs.type }} --no-git-tag-version 2>/dev/null | tail -n1)
           echo "New version: $NEW_VERSION"
           
           # Remove 'v' prefix if present
