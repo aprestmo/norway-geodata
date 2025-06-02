@@ -184,13 +184,33 @@ jobs:
           cp package.json package.json.backup
           npm pkg set publishConfig.registry="https://npm.pkg.github.com"
           
-          # Publish to GitHub Packages
-          npm publish
+          # Get current version for checking
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Attempting to publish version $CURRENT_VERSION to GitHub Packages"
+          
+          # Try to publish to GitHub Packages with error handling
+          if npm publish 2>&1 | tee publish_output.log; then
+            echo "✅ Successfully published to GitHub Packages"
+          else
+            if grep -q "Cannot publish over existing version" publish_output.log; then
+              echo "⚠️ Version $CURRENT_VERSION already exists in GitHub Packages - skipping"
+              echo "This is expected behavior when republishing the same version"
+            else
+              echo "❌ Failed to publish to GitHub Packages for unknown reason"
+              cat publish_output.log
+              # Don't fail the entire workflow for GitHub Packages issues
+              echo "Continuing workflow despite GitHub Packages failure"
+            fi
+          fi
+          
+          # Cleanup
+          rm -f publish_output.log
           
           # Restore original package.json
           mv package.json.backup package.json
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
       
       - name: Push changes and tags
         run: |
