@@ -1,0 +1,158 @@
+name: Auto Create PR
+
+on:
+  push:
+    branches:
+      - 'feat/**'
+      - 'fix/**'
+      - 'docs/**'
+      - 'chore/**'
+      - 'refactor/**'
+      - 'test/**'
+      - 'perf/**'
+      - 'ci/**'
+      - 'build/**'
+      - 'style/**'
+    # Only trigger if it's not already a PR
+    # This prevents infinite loops
+
+jobs:
+  auto-pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip-pr]')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Check if PR already exists
+        id: check-pr
+        run: |
+          # Check if a PR already exists for this branch
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          PR_EXISTS=$(gh pr list --head "$BRANCH_NAME" --json number --jq length)
+          
+          if [ "$PR_EXISTS" -gt 0 ]; then
+            echo "PR already exists for branch $BRANCH_NAME"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "No PR exists for branch $BRANCH_NAME"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Generate PR details
+        id: pr-details
+        if: steps.check-pr.outputs.skip == 'false'
+        run: |
+          BRANCH_NAME="${{ steps.check-pr.outputs.branch }}"
+          
+          # Extract type and description from branch name
+          # Examples: feat/add-new-function -> feat: add new function
+          #          fix/github-packages-version-conflict -> fix: github packages version conflict
+          
+          if [[ "$BRANCH_NAME" =~ ^([^/]+)/(.+)$ ]]; then
+            TYPE="${BASH_REMATCH[1]}"
+            DESCRIPTION="${BASH_REMATCH[2]}"
+            
+            # Convert kebab-case to title case
+            TITLE="$TYPE: $(echo "$DESCRIPTION" | sed 's/-/ /g')"
+          else
+            # Fallback for branches that don't follow the pattern
+            TYPE="feat"
+            TITLE="$TYPE: $BRANCH_NAME"
+            DESCRIPTION="$BRANCH_NAME"
+          fi
+          
+          # Get commit messages for the body
+          COMMITS=$(git log --oneline main..HEAD --pretty=format:"- %s" | head -10)
+          
+          # Generate body based on type
+          case "$TYPE" in
+            "feat")
+              BODY="## Description\n\nThis PR adds new functionality.\n\n## Changes\n\n$COMMITS\n\n## Type of Change\n\n- [x] ✨ New feature (non-breaking change which adds functionality)\n\n## Testing\n\n- [ ] Tests pass locally\n- [ ] TypeScript compilation succeeds\n- [ ] Data validation passes"
+              ;;
+            "fix")
+              BODY="## Description\n\nThis PR fixes an issue.\n\n## Changes\n\n$COMMITS\n\n## Type of Change\n\n- [x] 🐛 Bug fix (non-breaking change which fixes an issue)\n\n## Testing\n\n- [ ] Tests pass locally\n- [ ] TypeScript compilation succeeds\n- [ ] Fix verified"
+              ;;
+            "docs")
+              BODY="## Description\n\nThis PR updates documentation.\n\n## Changes\n\n$COMMITS\n\n## Type of Change\n\n- [x] 📚 Documentation update\n\n## Review\n\n- [ ] Documentation is clear and accurate\n- [ ] Links work correctly"
+              ;;
+            *)
+              BODY="## Description\n\nThis PR includes changes to the codebase.\n\n## Changes\n\n$COMMITS\n\n## Type of Change\n\n- [ ] 🐛 Bug fix\n- [ ] ✨ New feature\n- [ ] 💥 Breaking change\n- [ ] 📚 Documentation update\n- [ ] 🔧 Configuration change\n\n## Testing\n\n- [ ] Tests pass locally\n- [ ] TypeScript compilation succeeds"
+              ;;
+          esac
+          
+          # Set outputs
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "Generated PR title: $TITLE"
+      
+      - name: Create Pull Request
+        if: steps.check-pr.outputs.skip == 'false'
+        run: |
+          gh pr create \
+            --title "${{ steps.pr-details.outputs.title }}" \
+            --body "${{ steps.pr-details.outputs.body }}" \
+            --base main \
+            --head "${{ steps.check-pr.outputs.branch }}"
+          
+          echo "✅ Automatically created PR for branch ${{ steps.check-pr.outputs.branch }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Add labels
+        if: steps.check-pr.outputs.skip == 'false'
+        run: |
+          BRANCH_NAME="${{ steps.check-pr.outputs.branch }}"
+          
+          # Extract type for labeling
+          if [[ "$BRANCH_NAME" =~ ^([^/]+)/ ]]; then
+            TYPE="${BASH_REMATCH[1]}"
+            
+            case "$TYPE" in
+              "feat") LABEL="enhancement" ;;
+              "fix") LABEL="bug" ;;
+              "docs") LABEL="documentation" ;;
+              "chore") LABEL="maintenance" ;;
+              "refactor") LABEL="refactoring" ;;
+              "test") LABEL="testing" ;;
+              "perf") LABEL="performance" ;;
+              "ci") LABEL="ci" ;;
+              "build") LABEL="build" ;;
+              *) LABEL="" ;;
+            esac
+            
+            if [ -n "$LABEL" ]; then
+              gh pr edit "$BRANCH_NAME" --add-label "$LABEL"
+              echo "Added label: $LABEL"
+            fi
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      
+      - name: Summary
+        if: steps.check-pr.outputs.skip == 'false'
+        run: |
+          echo "## 🎉 Auto PR Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch**: ${{ steps.check-pr.outputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Title**: ${{ steps.pr-details.outputs.title }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The PR has been automatically created and is ready for review!" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Skip message
+        if: steps.check-pr.outputs.skip == 'true'
+        run: |
+          echo "ℹ️ PR already exists for branch ${{ steps.check-pr.outputs.branch }} - skipping creation"
+

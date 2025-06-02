@@ -31,13 +31,25 @@ git remote add upstream https://github.com/aprestmo/norway-geodata.git
 git checkout main
 git pull upstream main
 
-# Create a new branch for your feature
-git checkout -b feature/your-feature-name
+# Create a new branch with conventional naming for auto-PR creation
+git checkout -b feat/your-feature-name
 # or
 git checkout -b fix/your-bug-fix
 # or
 git checkout -b docs/your-documentation-update
 ```
+
+**🎯 Branch Naming Convention** (for automatic PR creation):
+- `feat/` - New features
+- `fix/` - Bug fixes  
+- `docs/` - Documentation
+- `chore/` - Maintenance
+- `refactor/` - Code refactoring
+- `test/` - Testing
+- `perf/` - Performance
+- `ci/` - CI/CD changes
+- `build/` - Build system
+- `style/` - Code style
 
 ### 3. Make Your Changes
 
@@ -79,15 +91,26 @@ git commit -m "docs: update API documentation"
 - `ci:` - CI/CD changes
 - `build:` - Build system changes
 
-### 5. Push and Create Pull Request
+### 5. Push and Auto-Create Pull Request
 
 ```bash
-# Push your branch to your fork
+# Push your branch - PR will be created automatically!
 git push origin feature/your-feature-name
+```
 
-# Create a pull request on GitHub
+🤖 **Automatic PR Creation**: When you push a branch with conventional naming (`feat/`, `fix/`, `docs/`, etc.), a pull request is automatically created with:
+- ✅ **Smart title generation** from branch name
+- ✅ **Pre-filled template** based on change type  
+- ✅ **Appropriate labels** automatically applied
+- ✅ **Commit history** included in description
+
+**Manual PR Creation** (if needed):
+```bash
+# Only needed if automatic creation fails or for custom branches
 gh pr create --title "feat: add new municipality search function" --body "Description of your changes"
 ```
+
+**Skip Auto-PR**: Add `[skip-pr]` to your commit message to prevent automatic PR creation.
 
 ## 📋 Pull Request Process
 
