@@ -160,6 +160,36 @@ export function getPostalCodesByMunicipality(municipalityId: string): readonly s
 }
 
 /**
+ * Get all postal codes from all municipalities.
+ * @param includeDetails - If true, returns objects with postal code and place name. If false, returns only postal codes (default: false)
+ * @returns Array of postal codes or postal code objects
+ */
+export function getAllPostalCodes(includeDetails: boolean = false): readonly string[] | readonly { zip: string; place: string; municipalityId: string; municipalityName: string }[] {
+  if (includeDetails) {
+    const allPostalCodes: { zip: string; place: string; municipalityId: string; municipalityName: string }[] = [];
+    municipalities.forEach(municipality => {
+      municipality.k_postal_codes.forEach(pc => {
+        allPostalCodes.push({
+          zip: pc.zip,
+          place: pc.place,
+          municipalityId: municipality.k_id,
+          municipalityName: municipality.k_name
+        });
+      });
+    });
+    return allPostalCodes.sort((a, b) => a.zip.localeCompare(b.zip));
+  } else {
+    const allPostalCodes = new Set<string>();
+    municipalities.forEach(municipality => {
+      municipality.k_postal_codes.forEach(pc => {
+        allPostalCodes.add(pc.zip);
+      });
+    });
+    return Array.from(allPostalCodes).sort();
+  }
+}
+
+/**
  * Get municipalities sorted by population.
  * @param ascending - Sort in ascending order if true (default: false for descending)
  * @returns Array of municipalities sorted by population
