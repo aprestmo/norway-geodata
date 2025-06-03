@@ -60,7 +60,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aprestmo/norway-geodata.git"
+    "url": "git+https://github.com/aprestmo/norway-geodata.git"
   },
   "publishConfig": {
     "access": "public",
