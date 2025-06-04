@@ -1,6 +1,6 @@
 {
   "name": "@aprestmo/norway-geodata",
-  "version": "0.0.1-alpha.1",
+  "version": "0.1.0",
   "description": "Administrative geographic data for Norway including municipalities, counties, and postal codes.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,8 +20,8 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "node": ">=20",
-    "npm": ">=10"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   },
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
@@ -41,7 +41,14 @@
     "version:prerelease": "npm version prerelease --no-git-tag-version",
     "check-version": "npm view @aprestmo/norway-geodata version",
     "check-conflicts": "node -e \"const pkg=require('./package.json'); const localVer=pkg.version; console.log('Local version:', localVer); require('child_process').exec('npm view @aprestmo/norway-geodata version', (err,stdout) => { if(err) { console.log('✅ Package not published yet - safe to publish'); return; } const remoteVer=stdout.trim(); console.log('Published version:', remoteVer); if(localVer===remoteVer) console.log('❌ Version conflict! Local version already published'); else console.log('✅ No conflicts - safe to publish'); });\"",
-    "version-status": "node -e \"const pkg=require('./package.json'); console.log('📦 Package:', pkg.name); console.log('🏷️  Local version:', pkg.version); require('child_process').exec('npm view @aprestmo/norway-geodata version', (err,stdout) => { if(err) { console.log('📡 Published: Not yet published'); } else { console.log('📡 Published version:', stdout.trim()); } });\""
+    "version-status": "node -e \"const pkg=require('./package.json'); console.log('📦 Package:', pkg.name); console.log('🏷️  Local version:', pkg.version); require('child_process').exec('npm view @aprestmo/norway-geodata version', (err,stdout) => { if(err) { console.log('📡 Published: Not yet published'); } else { console.log('📡 Published version:', stdout.trim()); } });\"",
+    "publish:npm": "npm run check-conflicts && npm run prepublishOnly && npm publish --access public",
+    "publish:npm-dry": "npm run prepublishOnly && npm publish --dry-run",
+    "publish:github": "npm run prepublishOnly && npm publish --registry=https://npm.pkg.github.com",
+    "publish:both": "npm run publish:npm && npm run publish:github",
+    "release:patch": "npm run version:patch && npm run publish:npm",
+    "release:minor": "npm run version:minor && npm run publish:npm",
+    "release:major": "npm run version:major && npm run publish:npm"
   },
   "files": [
     "dist",
