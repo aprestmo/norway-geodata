@@ -1,0 +1,77 @@
+[
+  {
+    "f_id": "03",
+    "f_name": "Oslo",
+    "f_url": "www.oslo.kommune.no"
+  },
+  {
+    "f_id": "11",
+    "f_name": "Rogaland",
+    "f_url": "www.rogfk.no"
+  },
+  {
+    "f_id": "15",
+    "f_name": "Møre og Romsdal",
+    "f_url": "www.mrfylke.no"
+  },
+  {
+    "f_id": "18",
+    "f_name": "Nordland",
+    "f_url": "www.nfk.no"
+  },
+  {
+    "f_id": "31",
+    "f_name": "Østfold",
+    "f_url": "www.ofk.no"
+  },
+  {
+    "f_id": "32",
+    "f_name": "Akershus",
+    "f_url": "www.afk.no"
+  },
+  {
+    "f_id": "33",
+    "f_name": "Buskerud",
+    "f_url": "www.bfk.no"
+  },
+  {
+    "f_id": "34",
+    "f_name": "Innlandet",
+    "f_url": "www.innlandetfylke.no"
+  },
+  {
+    "f_id": "39",
+    "f_name": "Vestfold",
+    "f_url": "www.vestfoldfylke.no"
+  },
+  {
+    "f_id": "40",
+    "f_name": "Telemark",
+    "f_url": "www.telemarkfylke.no"
+  },
+  {
+    "f_id": "42",
+    "f_name": "Agder",
+    "f_url": "www.agderfk.no"
+  },
+  {
+    "f_id": "46",
+    "f_name": "Vestland",
+    "f_url": "www.vestlandfylke.no"
+  },
+  {
+    "f_id": "50",
+    "f_name": "Trøndelag",
+    "f_url": "www.trondelagfylke.no"
+  },
+  {
+    "f_id": "55",
+    "f_name": "Troms",
+    "f_url": "www.tromsfylke.no"
+  },
+  {
+    "f_id": "56",
+    "f_name": "Finnmark",
+    "f_url": "www.ffk.no"
+  }
+]

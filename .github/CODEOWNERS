@@ -1,0 +1,20 @@
+# Global owners for the repository
+* @aprestmo
+
+# Data files require extra scrutiny
+/data/ @aprestmo
+
+# Source code changes
+/src/ @aprestmo
+
+# Workflow and CI/CD changes
+/.github/ @aprestmo
+
+# Package configuration
+package.json @aprestmo
+tsconfig.json @aprestmo
+.npmrc @aprestmo
+
+# Documentation
+README.md @aprestmo
+
