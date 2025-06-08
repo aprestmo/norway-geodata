@@ -168,9 +168,9 @@ export function getPostalCodesByMunicipality(municipalityId: string): readonly s
  * @param includeDetails - If true, returns objects with postal code and place name. If false, returns only postal codes (default: false)
  * @returns Array of postal codes or postal code objects
  */
-export function getAllPostalCodes(includeDetails: boolean = false): readonly string[] | readonly { zip: string; place: string; municipalityId: string; municipalityName: string }[] {
+export function getAllPostalCodes(includeDetails: boolean = false): readonly string[] | readonly { code: string; place: string; municipalityId: string; municipalityName: string }[] {
   if (includeDetails) {
-    const allPostalCodes: { zip: string; place: string; municipalityId: string; municipalityName: string }[] = [];
+    const allPostalCodes: { code: string; place: string; municipalityId: string; municipalityName: string }[] = [];
     municipalities.forEach(municipality => {
       municipality.postal_codes.forEach(pc => {
         allPostalCodes.push({
@@ -181,7 +181,7 @@ export function getAllPostalCodes(includeDetails: boolean = false): readonly str
         });
       });
     });
-    return allPostalCodes.sort((a, b) => a.zip.localeCompare(b.zip));
+    return allPostalCodes.sort((a, b) => a.code.localeCompare(b.code));
   } else {
     const allPostalCodes = new Set<string>();
     municipalities.forEach(municipality => {

@@ -69,7 +69,7 @@ console.log(`Found ${postalCodes.length} postal codes`);
 // Get postal codes with details
 const detailedCodes = getAllPostalCodes(true);
 console.log('First postal code:', detailedCodes[0]);
-// Output: { zip: "0001", place: "Oslo", municipalityId: "0301", municipalityName: "Oslo" }
+// Output: { code: "0001", place: "Oslo", municipalityId: "0301", municipalityName: "Oslo" }
 
 // Get all counties
 const counties = getCounties();
