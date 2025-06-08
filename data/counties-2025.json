@@ -1,0 +1,77 @@
+[
+  {
+    "id": "03",
+    "name": "Oslo",
+    "url": "www.oslo.kommune.no"
+  },
+  {
+    "id": "11",
+    "name": "Rogaland",
+    "url": "www.rogfk.no"
+  },
+  {
+    "id": "15",
+    "name": "Møre og Romsdal",
+    "url": "www.mrfylke.no"
+  },
+  {
+    "id": "18",
+    "name": "Nordland",
+    "url": "www.nfk.no"
+  },
+  {
+    "id": "31",
+    "name": "Østfold",
+    "url": "www.ofk.no"
+  },
+  {
+    "id": "32",
+    "name": "Akershus",
+    "url": "www.afk.no"
+  },
+  {
+    "id": "33",
+    "name": "Buskerud",
+    "url": "www.bfk.no"
+  },
+  {
+    "id": "34",
+    "name": "Innlandet",
+    "url": "www.innlandetfylke.no"
+  },
+  {
+    "id": "39",
+    "name": "Vestfold",
+    "url": "www.vestfoldfylke.no"
+  },
+  {
+    "id": "40",
+    "name": "Telemark",
+    "url": "www.telemarkfylke.no"
+  },
+  {
+    "id": "42",
+    "name": "Agder",
+    "url": "www.agderfk.no"
+  },
+  {
+    "id": "46",
+    "name": "Vestland",
+    "url": "www.vestlandfylke.no"
+  },
+  {
+    "id": "50",
+    "name": "Trøndelag",
+    "url": "www.trondelagfylke.no"
+  },
+  {
+    "id": "55",
+    "name": "Troms",
+    "url": "www.tromsfylke.no"
+  },
+  {
+    "id": "56",
+    "name": "Finnmark",
+    "url": "www.ffk.no"
+  }
+]
