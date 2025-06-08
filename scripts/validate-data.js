@@ -53,26 +53,26 @@ function main() {
   const dataDir = path.join(__dirname, '..', 'data');
   
   // Validate JSON files
-  const municipalities = validateJsonFile(path.join(dataDir, 'kommuner-2025.json'));
-  const counties = validateJsonFile(path.join(dataDir, 'fylker-2025.json'));
+  const municipalities = validateJsonFile(path.join(dataDir, 'municipalities-2025.json'));
+  const counties = validateJsonFile(path.join(dataDir, 'counties-2025.json'));
   const postalCodes = validateJsonFile(path.join(dataDir, 'postal-codes-2025.json'));
   
   // Validate data structures
   validateDataStructure(
     municipalities, 
-    ['k_id', 'k_name', 'k_name_no', 'k_population', 'k_area', 'k_postal_codes'],
+    ['id', 'name', 'name_no', 'population', 'area', 'postal_codes'],
     'municipality'
   );
   
   validateDataStructure(
     counties,
-    ['f_id', 'f_name', 'f_url'],
+    ['id', 'name', 'url'],
     'county'
   );
   
   validateDataStructure(
     postalCodes,
-    ['k_postal_code', 'k_postal_place', 'k_id'],
+    ['code', 'place', 'id'],
     'postal code'
   );
   
@@ -82,16 +82,16 @@ function main() {
   // Check municipality IDs are unique
   const municipalityIds = new Set();
   for (const municipality of municipalities) {
-    if (municipalityIds.has(municipality.k_id)) {
-      throw new Error(`Duplicate municipality ID: ${municipality.k_id}`);
+    if (municipalityIds.has(municipality.id)) {
+      throw new Error(`Duplicate municipality ID: ${municipality.id}`);
     }
-    municipalityIds.add(municipality.k_id);
+    municipalityIds.add(municipality.id);
   }
   
   // Check postal codes reference valid municipalities
   for (const postalCode of postalCodes.slice(0, 100)) { // Sample first 100 for performance
-    if (!municipalityIds.has(postalCode.k_id)) {
-      throw new Error(`Postal code ${postalCode.k_postal_code} references invalid municipality ID: ${postalCode.k_id}`);
+    if (!municipalityIds.has(postalCode.id)) {
+      throw new Error(`Postal code ${postalCode.code} references invalid municipality ID: ${postalCode.id}`);
     }
   }
   

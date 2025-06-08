@@ -1,34 +1,34 @@
 /**
  * Language status for Norwegian municipalities
  */
-export type LanguageStatus = 'Nøytral' | 'Bokmål' | 'Nynorsk' | 'Sami' | 'Kvensk';
+export type LanguageStatus = 'Nøytral' | 'Bokmål' | 'Nynorsk';
 
 /**
  * Municipality (Kommune) data structure
  */
 export interface Municipality {
   /** 4-digit municipality ID */
-  readonly k_id: string;
+  readonly id: string;
   /** Municipality name */
-  readonly k_name: string;
+  readonly name: string;
   /** Municipality name in Norwegian */
-  readonly k_name_no: string;
+  readonly name_no: string;
   /** Administrative center */
-  readonly k_adm_center: string;
+  readonly adm_center: string;
   /** Population count */
-  readonly k_population: number;
+  readonly population: number;
   /** Area in square kilometers */
-  readonly k_area: number;
+  readonly area: number;
   /** Official language status */
-  readonly k_language: LanguageStatus;
+  readonly language: LanguageStatus;
   /** Official website URL */
-  readonly k_url: string;
+  readonly url: string;
   /** Array of postal codes with place names */
-  readonly k_postal_codes: readonly {
+  readonly postal_codes: readonly {
     /** 4-digit postal code */
-    readonly postal_code: string;
+    readonly code: string;
     /** Place name */
-    readonly postal_place: string;
+    readonly place: string;
   }[];
 }
 /**
@@ -36,11 +36,11 @@ export interface Municipality {
  */
 export interface County {
   /** 2-digit county ID */
-  readonly f_id: string;
+  readonly id: string;
   /** County name */
-  readonly f_name: string;
+  readonly name: string;
   /** Official website URL */
-  readonly f_url: string;
+  readonly url: string;
 }
 
 /**
@@ -100,11 +100,11 @@ export interface MunicipalityFilterOptions {
  */
 export interface PostalCode {
   /** 4-digit postal code */
-  readonly k_postal_code: string;
+  readonly code: string;
   /** Postal place name */
-  readonly k_postal_place: string;
+  readonly place: string;
   /** 4-digit municipality ID */
-  readonly k_id: string;
+  readonly id: string;
 }
 
 /**
@@ -116,4 +116,3 @@ export interface PostalCodeSearchOptions {
   /** Exact match only */
   readonly exactMatch?: boolean;
 }
-

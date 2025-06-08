@@ -1,5 +1,5 @@
-import municipalitiesData from '../data/kommuner-2025.json';
-import countiesData from '../data/fylker-2025.json';
+import municipalitiesData from '../data/municipalities-2025.json';
+import countiesData from '../data/counties-2025.json';
 import postalCodesData from '../data/postal-codes-2025.json';
 import packageJson from '../package.json';
 import type {
@@ -44,7 +44,7 @@ export function getMunicipalityById(id: string): Municipality | undefined {
   if (typeof id !== 'string') {
     throw new TypeError('Municipality ID must be a string');
   }
-  return municipalities.find(m => m.k_id === id);
+  return municipalities.find(m => m.id === id);
 }
 
 /**
@@ -72,8 +72,8 @@ export function getMunicipalitiesByName(
   
   return municipalities.filter(m => {
     const namesToSearch = includeAllNames 
-      ? [m.k_name, m.k_name_no]
-      : [m.k_name];
+      ? [m.name, m.name_no]
+      : [m.name];
     
     return namesToSearch.some(municipalityName => {
       const compareString = caseSensitive 
@@ -105,7 +105,7 @@ export function getCountyById(id: string): County | undefined {
   if (typeof id !== 'string') {
     throw new TypeError('County ID must be a string');
   }
-  return counties.find(f => f.f_id === id);
+  return counties.find(f => f.id === id);
 }
 
 /**
@@ -121,14 +121,14 @@ export function getCountyByName(name: string, exactMatch: boolean = false): Coun
   }
   const searchTerm = name.toLowerCase();
   return counties.find(f => {
-    const countyName = f.f_name.toLowerCase();
+    const countyName = f.name.toLowerCase();
     return exactMatch ? countyName === searchTerm : countyName.includes(searchTerm);
   });
 }
 
 /**
  * Get all municipalities in a given county.
- * @param countyId - 2-digit county ID (first two digits of municipality k_id)
+ * @param countyId - 2-digit county ID (first two digits of municipality id)
  * @returns Array of municipalities in the county
  * @throws {TypeError} If countyId is not a string
  */
@@ -136,7 +136,7 @@ export function getMunicipalitiesByCounty(countyId: string): Municipality[] {
   if (typeof countyId !== 'string') {
     throw new TypeError('County ID must be a string');
   }
-  return municipalities.filter(m => m.k_id.startsWith(countyId));
+  return municipalities.filter(m => m.id.startsWith(countyId));
 }
 
 /**
@@ -150,7 +150,7 @@ export function getMunicipalityByPostalCode(postalCode: string | number): Munici
   if (!code.match(/^\d{4}$/)) {
     throw new TypeError('Postal code must be a valid 4-digit number');
   }
-  return municipalities.find(m => m.k_postal_codes.some(pc => pc.postal_code === code));
+  return municipalities.find(m => m.postal_codes.some(pc => pc.code === code));
 }
 
 /**
@@ -160,7 +160,7 @@ export function getMunicipalityByPostalCode(postalCode: string | number): Munici
  */
 export function getPostalCodesByMunicipality(municipalityId: string): readonly string[] | undefined {
   const municipality = getMunicipalityById(municipalityId);
-  return municipality ? municipality.k_postal_codes.map(pc => pc.postal_code) : undefined;
+  return municipality ? municipality.postal_codes.map(pc => pc.code) : undefined;
 }
 
 /**
@@ -172,12 +172,12 @@ export function getAllPostalCodes(includeDetails: boolean = false): readonly str
   if (includeDetails) {
     const allPostalCodes: { zip: string; place: string; municipalityId: string; municipalityName: string }[] = [];
     municipalities.forEach(municipality => {
-      municipality.k_postal_codes.forEach(pc => {
+      municipality.postal_codes.forEach(pc => {
         allPostalCodes.push({
-          zip: pc.postal_code,
-          place: pc.postal_place,
-          municipalityId: municipality.k_id,
-          municipalityName: municipality.k_name
+          code: pc.code,
+          place: pc.place,
+          municipalityId: municipality.id,
+          municipalityName: municipality.name
         });
       });
     });
@@ -185,8 +185,8 @@ export function getAllPostalCodes(includeDetails: boolean = false): readonly str
   } else {
     const allPostalCodes = new Set<string>();
     municipalities.forEach(municipality => {
-      municipality.k_postal_codes.forEach(pc => {
-        allPostalCodes.add(pc.postal_code);
+      municipality.postal_codes.forEach(pc => {
+        allPostalCodes.add(pc.code);
       });
     });
     return Array.from(allPostalCodes).sort();
@@ -200,7 +200,7 @@ export function getAllPostalCodes(includeDetails: boolean = false): readonly str
  */
 export function getMunicipalitiesByPopulation(ascending: boolean = false): Municipality[] {
   const sorted = [...municipalities].sort((a, b) => 
-    ascending ? a.k_population - b.k_population : b.k_population - a.k_population
+    ascending ? a.population - b.population : b.population - a.population
   );
   return sorted;
 }
@@ -212,7 +212,7 @@ export function getMunicipalitiesByPopulation(ascending: boolean = false): Munic
  */
 export function getMunicipalitiesByArea(ascending: boolean = false): Municipality[] {
   const sorted = [...municipalities].sort((a, b) => 
-    ascending ? a.k_area - b.k_area : b.k_area - a.k_area
+    ascending ? a.area - b.area : b.area - a.area
   );
   return sorted;
 }
@@ -227,7 +227,7 @@ export function getMunicipalitiesByLanguage(language: LanguageStatus): Municipal
   if (typeof language !== 'string') {
     throw new TypeError('Language must be a string');
   }
-  return municipalities.filter(m => m.k_language === language);
+  return municipalities.filter(m => m.language === language);
 }
 
 /**
@@ -237,12 +237,12 @@ export function getMunicipalitiesByLanguage(language: LanguageStatus): Municipal
  */
 export function getMunicipalitiesFiltered(options: MunicipalityFilterOptions): Municipality[] {
   return municipalities.filter(m => {
-    if (options.minPopulation !== undefined && m.k_population < options.minPopulation) return false;
-    if (options.maxPopulation !== undefined && m.k_population > options.maxPopulation) return false;
-    if (options.minArea !== undefined && m.k_area < options.minArea) return false;
-    if (options.maxArea !== undefined && m.k_area > options.maxArea) return false;
-    if (options.language !== undefined && m.k_language !== options.language) return false;
-    if (options.countyId !== undefined && !m.k_id.startsWith(options.countyId)) return false;
+    if (options.minPopulation !== undefined && m.population < options.minPopulation) return false;
+    if (options.maxPopulation !== undefined && m.population > options.maxPopulation) return false;
+    if (options.minArea !== undefined && m.area < options.minArea) return false;
+    if (options.maxArea !== undefined && m.area > options.maxArea) return false;
+    if (options.language !== undefined && m.language !== options.language) return false;
+    if (options.countyId !== undefined && !m.id.startsWith(options.countyId)) return false;
     return true;
   });
 }
@@ -252,7 +252,7 @@ export function getMunicipalitiesFiltered(options: MunicipalityFilterOptions): M
  * @returns Total population
  */
 export function getTotalPopulation(): number {
-  return municipalities.reduce((total, m) => total + m.k_population, 0);
+  return municipalities.reduce((total, m) => total + m.population, 0);
 }
 
 /**
@@ -260,7 +260,7 @@ export function getTotalPopulation(): number {
  * @returns Total area in square kilometers
  */
 export function getTotalArea(): number {
-  return municipalities.reduce((total, m) => total + m.k_area, 0);
+  return municipalities.reduce((total, m) => total + m.area, 0);
 }
 
 /**
@@ -268,7 +268,7 @@ export function getTotalArea(): number {
  * @returns Object with min, max, and average population density
  */
 export function getPopulationDensityStats(): PopulationDensityStats {
-  const densities = municipalities.map(m => m.k_population / m.k_area);
+  const densities = municipalities.map(m => m.population / m.area);
   return {
     min: Math.min(...densities),
     max: Math.max(...densities),
@@ -287,7 +287,7 @@ export function getMunicipalitiesByPopulationDensity(
   maxDensity: number = Infinity
 ): Municipality[] {
   return municipalities.filter(m => {
-    const density = m.k_population / m.k_area;
+    const density = m.population / m.area;
     return density >= minDensity && density <= maxDensity;
   });
 }
@@ -332,7 +332,7 @@ export function getPostalCodeByCode(code: string): PostalCode | undefined {
   if (typeof code !== 'string') {
     throw new TypeError('Postal code must be a string');
   }
-  return postalCodes.find(pc => pc.k_postal_code === code);
+  return postalCodes.find(pc => pc.code === code);
 }
 
 /**
@@ -359,8 +359,8 @@ export function getPostalCodesByPlace(
   
   return postalCodes.filter(pc => {
     const placeName = caseSensitive 
-      ? pc.k_postal_place 
-      : pc.k_postal_place.toLowerCase();
+      ? pc.place 
+      : pc.place.toLowerCase();
     
     return exactMatch 
       ? placeName === searchTerm
@@ -378,7 +378,7 @@ export function getPostalCodesByMunicipalityId(municipalityId: string): PostalCo
   if (typeof municipalityId !== 'string') {
     throw new TypeError('Municipality ID must be a string');
   }
-  return postalCodes.filter(pc => pc.k_id === municipalityId);
+  return postalCodes.filter(pc => pc.id === municipalityId);
 }
 
 /**
@@ -387,7 +387,7 @@ export function getPostalCodesByMunicipalityId(municipalityId: string): PostalCo
  */
 export function getUniquePostalPlaces(): readonly string[] {
   const uniquePlaces = new Set<string>();
-  postalCodes.forEach(pc => uniquePlaces.add(pc.k_postal_place));
+  postalCodes.forEach(pc => uniquePlaces.add(pc.place));
   return Array.from(uniquePlaces).sort();
 }
 
@@ -404,7 +404,7 @@ export function getPostalCodesInRange(startCode: string, endCode: string): Posta
   }
   
   return postalCodes.filter(pc => 
-    pc.k_postal_code >= startCode && pc.k_postal_code <= endCode
+    pc.code >= startCode && pc.code <= endCode
   );
 }
 
@@ -421,8 +421,8 @@ export function getPostalCodesStats(): {
   const uniqueMunicipalities = new Set<string>();
   
   postalCodes.forEach(pc => {
-    uniquePlaces.add(pc.k_postal_place);
-    uniqueMunicipalities.add(pc.k_id);
+    uniquePlaces.add(pc.place);
+    uniqueMunicipalities.add(pc.id);
   });
   
   return {
@@ -440,8 +440,8 @@ export function getPostalCodesStats(): {
 export function getPostalCodesSorted(ascending: boolean = true): PostalCode[] {
   const sorted = [...postalCodes].sort((a, b) => 
     ascending 
-      ? a.k_postal_code.localeCompare(b.k_postal_code)
-      : b.k_postal_code.localeCompare(a.k_postal_code)
+      ? a.code.localeCompare(b.code)
+      : b.code.localeCompare(a.code)
   );
   return sorted;
 }
@@ -455,7 +455,7 @@ export function isValidPostalCode(code: string): boolean {
   if (typeof code !== 'string') {
     return false;
   }
-  return postalCodes.some(pc => pc.k_postal_code === code);
+  return postalCodes.some(pc => pc.code === code);
 }
 
 /**
@@ -470,9 +470,9 @@ export function getPostalCodesByMunicipalityName(
   exactMatch: boolean = false
 ): PostalCode[] {
   const matchingMunicipalities = getMunicipalitiesByName(municipalityName, { exactMatch });
-  const municipalityIds = matchingMunicipalities.map(m => m.k_id);
+  const municipalityIds = matchingMunicipalities.map(m => m.id);
   
-  return postalCodes.filter(pc => municipalityIds.includes(pc.k_id));
+  return postalCodes.filter(pc => municipalityIds.includes(pc.id));
 }
 
 // Export types for external use

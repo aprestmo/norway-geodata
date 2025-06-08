@@ -56,7 +56,7 @@ console.log(`Found ${municipalities.length} municipalities`);
 
 // Find Oslo
 const oslo = getMunicipalityById('0301');
-console.log('Oslo population:', oslo?.k_population);
+console.log('Oslo population:', oslo?.population);
 
 // Search municipalities
 const bergMunicipalities = getMunicipalitiesByName('berg');
@@ -96,7 +96,7 @@ console.log(`Total postal codes: ${allPostalCodes.length}`);
 // Find a specific postal code
 const osloCenter = getPostalCodeByCode('0001');
 console.log(osloCenter);
-// Output: { k_postal_code: "0001", k_postal_place: "Oslo", k_id: "0301" }
+// Output: { code: "0001", place: "Oslo", id: "0301" }
 
 // Search by place name (case-insensitive partial match)
 const bergensPostalCodes = getPostalCodesByPlace('bergen');
@@ -197,9 +197,9 @@ import type {
 const oslo: Municipality | undefined = getMunicipalityById('0301');
 if (oslo) {
   // Full IntelliSense support
-  console.log(oslo.k_name);       // string
-  console.log(oslo.k_population); // number
-  console.log(oslo.k_postal_codes); // readonly number[]
+  console.log(oslo.name);       // string
+  console.log(oslo.population); // number
+  console.log(oslo.postal_codes); // readonly number[]
 }
 ```
 
@@ -208,33 +208,33 @@ if (oslo) {
 ### Municipality
 ```typescript
 interface Municipality {
-  readonly k_id: string;                    // "0301" (Oslo)
-  readonly k_name: string;                  // "Oslo"
-  readonly k_name_no: string;               // "Oslo"
-  readonly k_adm_center: string;            // "Oslo"
-  readonly k_population: number;            // 709037
-  readonly k_area: number;                  // 454.07
-  readonly k_language: LanguageStatus;      // "Nøytral"
-  readonly k_url: string;                   // "https://oslo.kommune.no"
-  readonly k_postal_codes: readonly number[]; // [179, 180, 181, ...]
+  readonly id: string;                    // "0301" (Oslo)
+  readonly name: string;                  // "Oslo"
+  readonly name_no: string;               // "Oslo"
+  readonly adm_center: string;            // "Oslo"
+  readonly population: number;            // 709037
+  readonly area: number;                  // 454.07
+  readonly language: LanguageStatus;      // "Nøytral"
+  readonly url: string;                   // "https://oslo.kommune.no"
+  readonly postal_codes: readonly number[]; // [179, 180, 181, ...]
 }
 ```
 
 ### County
 ```typescript
 interface County {
-  readonly f_id: string;    // "03" (Oslo)
-  readonly f_name: string;  // "Oslo"
-  readonly f_url: string;   // "https://oslo.fylkeskommune.no"
+  readonly id: string;    // "03" (Oslo)
+  readonly name: string;  // "Oslo"
+  readonly url: string;   // "https://oslo.fylkeskommune.no"
 }
 ```
 
 ### PostalCode
 ```typescript
 interface PostalCode {
-  readonly k_postal_code: string;    // "0001"
-  readonly k_postal_place: string;   // "Oslo"
-  readonly k_id: string;             // "0301" (municipality ID)
+  readonly code: string;    // "0001"
+  readonly place: string;   // "Oslo"
+  readonly id: string;             // "0301" (municipality ID)
 }
 ```
 

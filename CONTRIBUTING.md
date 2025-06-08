@@ -154,8 +154,8 @@ npm run dev          # Watch mode for development
 ## 📁 Types of Contributions
 
 ### Data Updates
-- Municipality changes (`data/kommuner-2025.json`)
-- County changes (`data/fylker-2025.json`)
+- Municipality changes (`data/municipalities-2025.json`)
+- County changes (`data/counties-2025.json`)
 - **Impact**: Minor version bump (automatic)
 
 ### Code Changes
