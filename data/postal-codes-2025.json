@@ -220,11 +220,6 @@
     "id": "0301"
   },
   {
-    "code": "0128",
-    "place": "Oslo",
-    "id": "0301"
-  },
-  {
     "code": "0129",
     "place": "Oslo",
     "id": "0301"
@@ -6995,22 +6990,12 @@
     "id": "3436"
   },
   {
-    "code": "2645",
-    "place": "Sør-Fron",
-    "id": "3438"
-  },
-  {
     "code": "2646",
     "place": "Gålå",
     "id": "3438"
   },
   {
     "code": "2647",
-    "place": "Sør-Fron",
-    "id": "3438"
-  },
-  {
-    "code": "2648",
     "place": "Sør-Fron",
     "id": "3438"
   },
@@ -8475,11 +8460,6 @@
     "id": "3901"
   },
   {
-    "code": "3168",
-    "place": "Melsomvik",
-    "id": "3907"
-  },
-  {
     "code": "3170",
     "place": "Sem",
     "id": "3905"
@@ -9470,11 +9450,6 @@
     "id": "3305"
   },
   {
-    "code": "3527",
-    "place": "Bjoneroa",
-    "id": "3446"
-  },
-  {
     "code": "3528",
     "place": "Hedalen",
     "id": "3449"
@@ -10221,11 +10196,6 @@
   },
   {
     "code": "3786",
-    "place": "Skien",
-    "id": "4003"
-  },
-  {
-    "code": "3787",
     "place": "Skien",
     "id": "4003"
   },
@@ -11063,6 +11033,11 @@
     "code": "4073",
     "place": "Randaberg",
     "id": "1127"
+  },
+  {
+    "code": "4075",
+    "place": "Stavanger",
+    "id": "1103"
   },
   {
     "code": "4076",
@@ -14070,11 +14045,6 @@
     "id": "4624"
   },
   {
-    "code": "5214",
-    "place": "Lysekloster",
-    "id": "4624"
-  },
-  {
     "code": "5215",
     "place": "Lysekloster",
     "id": "4624"
@@ -16405,11 +16375,6 @@
     "id": "4634"
   },
   {
-    "code": "5982",
-    "place": "Masfjordnes",
-    "id": "4634"
-  },
-  {
     "code": "5983",
     "place": "Haugsvær",
     "id": "4634"
@@ -16740,11 +16705,6 @@
     "id": "1514"
   },
   {
-    "code": "6079",
-    "place": "Gurskøy",
-    "id": "1515"
-  },
-  {
     "code": "6080",
     "place": "Gurskøy",
     "id": "1515"
@@ -16881,11 +16841,6 @@
   },
   {
     "code": "6133",
-    "place": "Lauvstad",
-    "id": "1577"
-  },
-  {
-    "code": "6134",
     "place": "Lauvstad",
     "id": "1577"
   },
@@ -17241,7 +17196,7 @@
   },
   {
     "code": "6295",
-    "place": "Myklebost",
+    "place": "Myklebust",
     "id": "1508"
   },
   {
@@ -17536,11 +17491,6 @@
   },
   {
     "code": "6434",
-    "place": "Molde",
-    "id": "1506"
-  },
-  {
-    "code": "6435",
     "place": "Molde",
     "id": "1506"
   },
@@ -18145,11 +18095,6 @@
     "id": "4602"
   },
   {
-    "code": "6703",
-    "place": "Måløy",
-    "id": "4602"
-  },
-  {
     "code": "6704",
     "place": "Deknepollen",
     "id": "4602"
@@ -18568,11 +18513,6 @@
     "code": "6844",
     "place": "Vassenden",
     "id": "4647"
-  },
-  {
-    "code": "6845",
-    "place": "Fjærland",
-    "id": "4640"
   },
   {
     "code": "6847",
@@ -19086,11 +19026,6 @@
   },
   {
     "code": "6996",
-    "place": "Vadheim",
-    "id": "4638"
-  },
-  {
-    "code": "6997",
     "place": "Vadheim",
     "id": "4638"
   },
@@ -20531,11 +20466,6 @@
   },
   {
     "code": "7458",
-    "place": "Trondheim",
-    "id": "5001"
-  },
-  {
-    "code": "7459",
     "place": "Trondheim",
     "id": "5001"
   },
@@ -22030,11 +21960,6 @@
     "id": "1838"
   },
   {
-    "code": "8128",
-    "place": "Ytre Beiarn",
-    "id": "1839"
-  },
-  {
     "code": "8130",
     "place": "Sandhornøy",
     "id": "1838"
@@ -22171,7 +22096,7 @@
   },
   {
     "code": "8188",
-    "place": "Nordvernes",
+    "place": "Nordværnes",
     "id": "1836"
   },
   {
@@ -22196,7 +22121,7 @@
   },
   {
     "code": "8195",
-    "place": "Gjerøy",
+    "place": "Gjerdøya",
     "id": "1836"
   },
   {
@@ -22206,12 +22131,12 @@
   },
   {
     "code": "8197",
-    "place": "Storselsøy",
+    "place": "Storselsøya",
     "id": "1836"
   },
   {
     "code": "8198",
-    "place": "Nordnesøy",
+    "place": "Nordnesøya",
     "id": "1836"
   },
   {
@@ -22381,7 +22306,7 @@
   },
   {
     "code": "8273",
-    "place": "Nevervik",
+    "place": "Nevervika",
     "id": "1875"
   },
   {
@@ -22391,7 +22316,7 @@
   },
   {
     "code": "8275",
-    "place": "Storjord i Tysfjord",
+    "place": "Storjorda i Tysfjorden",
     "id": "1875"
   },
   {
@@ -22711,7 +22636,7 @@
   },
   {
     "code": "8409",
-    "place": "Gullesfjord",
+    "place": "Gullesfjorden",
     "id": "5510"
   },
   {
@@ -22726,7 +22651,7 @@
   },
   {
     "code": "8412",
-    "place": "Vestbygd",
+    "place": "Vestbygda",
     "id": "1851"
   },
   {
@@ -23351,7 +23276,7 @@
   },
   {
     "code": "8730",
-    "place": "Bratland",
+    "place": "Aldersundet",
     "id": "1834"
   },
   {
@@ -23371,7 +23296,7 @@
   },
   {
     "code": "8740",
-    "place": "Nord-Solvær",
+    "place": "Nordsolvær",
     "id": "1834"
   },
   {
@@ -23485,6 +23410,11 @@
     "id": "1818"
   },
   {
+    "code": "8845",
+    "place": "Seløy",
+    "id": "1818"
+  },
+  {
     "code": "8850",
     "place": "Herøy",
     "id": "1818"
@@ -23546,7 +23476,7 @@
   },
   {
     "code": "8892",
-    "place": "Sundøy",
+    "place": "Sundøya",
     "id": "1822"
   },
   {
@@ -23806,7 +23736,7 @@
   },
   {
     "code": "9043",
-    "place": "Jøvik",
+    "place": "Jøvika",
     "id": "5501"
   },
   {
@@ -23926,7 +23856,7 @@
   },
   {
     "code": "9110",
-    "place": "Sommarøy",
+    "place": "Sommarøya",
     "id": "5501"
   },
   {
@@ -23936,7 +23866,7 @@
   },
   {
     "code": "9119",
-    "place": "Sommarøy",
+    "place": "Sommarøya",
     "id": "5501"
   },
   {
@@ -23996,7 +23926,7 @@
   },
   {
     "code": "9141",
-    "place": "Mjølvik",
+    "place": "Melvika",
     "id": "5501"
   },
   {
@@ -24396,11 +24326,6 @@
   },
   {
     "code": "9288",
-    "place": "Tromsø",
-    "id": "5501"
-  },
-  {
-    "code": "9290",
     "place": "Tromsø",
     "id": "5501"
   },
