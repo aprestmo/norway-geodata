@@ -3740,6 +3740,11 @@
     "id": "3207"
   },
   {
+    "code": "1426",
+    "place": "Solberg",
+    "id": "3218"
+  },
+  {
     "code": "1429",
     "place": "Vinterbro",
     "id": "3218"
@@ -6865,11 +6870,6 @@
     "id": "3405"
   },
   {
-    "code": "2620",
-    "place": "Mesnali",
-    "id": "3411"
-  },
-  {
     "code": "2621",
     "place": "Vingrom",
     "id": "3405"
@@ -7142,11 +7142,6 @@
   {
     "code": "2680",
     "place": "Vågå",
-    "id": "3435"
-  },
-  {
-    "code": "2681",
-    "place": "Lalm",
     "id": "3435"
   },
   {
@@ -8590,11 +8585,6 @@
     "id": "3901"
   },
   {
-    "code": "3197",
-    "place": "Nykirke",
-    "id": "3901"
-  },
-  {
     "code": "3199",
     "place": "Borre",
     "id": "3901"
@@ -8817,11 +8807,6 @@
   {
     "code": "3244",
     "place": "Sandefjord",
-    "id": "3907"
-  },
-  {
-    "code": "3245",
-    "place": "Kodal",
     "id": "3907"
   },
   {
@@ -14040,11 +14025,6 @@
     "id": "4624"
   },
   {
-    "code": "5213",
-    "place": "Lepsøy",
-    "id": "4624"
-  },
-  {
     "code": "5215",
     "place": "Lysekloster",
     "id": "4624"
@@ -14156,6 +14136,11 @@
   },
   {
     "code": "5244",
+    "place": "Fana",
+    "id": "4601"
+  },
+  {
+    "code": "5245",
     "place": "Fana",
     "id": "4601"
   },
@@ -17245,11 +17230,6 @@
     "id": "1539"
   },
   {
-    "code": "6331",
-    "place": "Verma",
-    "id": "1539"
-  },
-  {
     "code": "6339",
     "place": "Isfjorden",
     "id": "1539"
@@ -17866,11 +17846,6 @@
   },
   {
     "code": "6622",
-    "place": "Ålvundfjord",
-    "id": "1563"
-  },
-  {
-    "code": "6623",
     "place": "Ålvundfjord",
     "id": "1563"
   },
@@ -19266,7 +19241,7 @@
   },
   {
     "code": "7053",
-    "place": "Ranheim",
+    "place": "Charlottenlund",
     "id": "5001"
   },
   {
@@ -19526,11 +19501,6 @@
   },
   {
     "code": "7150",
-    "place": "Storfosna",
-    "id": "5057"
-  },
-  {
-    "code": "7151",
     "place": "Storfosna",
     "id": "5057"
   },
@@ -19992,11 +19962,6 @@
   {
     "code": "7332",
     "place": "Løkken Verk",
-    "id": "5059"
-  },
-  {
-    "code": "7333",
-    "place": "Storås",
     "id": "5059"
   },
   {
@@ -22520,11 +22485,6 @@
     "id": "1860"
   },
   {
-    "code": "8374",
-    "place": "Ballstad",
-    "id": "1860"
-  },
-  {
     "code": "8376",
     "place": "Leknes",
     "id": "1860"
@@ -22671,11 +22631,6 @@
   },
   {
     "code": "8416",
-    "place": "Sortland",
-    "id": "1870"
-  },
-  {
-    "code": "8419",
     "place": "Sortland",
     "id": "1870"
   },
@@ -24570,11 +24525,6 @@
     "id": "5530"
   },
   {
-    "code": "9391",
-    "place": "Stonglandseidet",
-    "id": "5530"
-  },
-  {
     "code": "9392",
     "place": "Stonglandseidet",
     "id": "5530"
@@ -24766,11 +24716,6 @@
   },
   {
     "code": "9455",
-    "place": "Engenes",
-    "id": "5514"
-  },
-  {
-    "code": "9456",
     "place": "Engenes",
     "id": "5514"
   },
@@ -25190,6 +25135,11 @@
     "id": "5603"
   },
   {
+    "code": "9653",
+    "place": "Hellefjord",
+    "id": "5603"
+  },
+  {
     "code": "9657",
     "place": "Kårhamn",
     "id": "5603"
@@ -25601,6 +25551,11 @@
   },
   {
     "code": "9990",
+    "place": "Båtsfjord",
+    "id": "5632"
+  },
+  {
+    "code": "9991",
     "place": "Båtsfjord",
     "id": "5632"
   }

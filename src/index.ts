@@ -1,6 +1,6 @@
 import municipalitiesData from '../data/municipalities-2025.json';
 import countiesData from '../data/counties-2025.json';
-import postalCodesData from '../data/postal-codes-2025.json';
+import postalCodesData from '../data/postal-codes-2026.json';
 import packageJson from '../package.json';
 import type {
   Municipality,

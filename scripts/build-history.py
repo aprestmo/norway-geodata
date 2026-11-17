@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Builds data/history/: postal codes, municipalities and counties over time.
+"""Builds data/history/ (postal codes, municipalities and counties over time) and
+refreshes data/postal-codes-2026.json (today's postal codes).
 
 Sources (fetched on every run, nothing is cached):
 - Statistics Norway (SSB) Klass 131 (municipalities) and 104 (counties): ids, names, changes.
@@ -26,7 +27,7 @@ TODAY = datetime.date.today().isoformat()
 KLASS = 'https://data.ssb.no/api/klass/v1/classifications'
 BRING = 'https://www.bring.no'
 # The lineage (which earlier ids make up a municipality of today) is built from this date.
-LINEAGE_SINCE = '2008-01-01'
+LINEAGE_SINCE = '2003-01-01'
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SINCE = '2003-01-01'
 
@@ -342,7 +343,16 @@ def main():
     now = register()
     events = change_log()
     periods, odd, replaced = replay(now, events)
-    lineage_since_2008, report = build(set(today), klass(f'131/changes?from={LINEAGE_SINCE}&to={TODAY}')['codeChanges'], periods, replaced, names)
+    lineage, report = build(set(today), klass(f'131/changes?from={LINEAGE_SINCE}&to={TODAY}')['codeChanges'], periods, replaced, names)
+
+    # Today's register, in the file the main entry point reads. A place keeps the spelling
+    # it already has («Mo i Rana»); Posten writes everything in capitals.
+    current = ROOT / 'data/postal-codes-2026.json'
+    spelling = {e['place'].upper(): e['place'] for e in json.loads(current.read_text())}
+    current.write_text(json.dumps(
+        [{'code': pn, 'place': spelling.get(v[0], title(v[0])), 'id': v[1]} for pn, v in sorted(now.items())],
+        ensure_ascii=False, indent=2) + '\n')
+    print(f'{current.relative_to(ROOT)}: {len(now)} entries')
 
     write('postal-codes.json', [
         {'code': pn, 'periods': [
@@ -356,7 +366,7 @@ def main():
         {'id': f'{kid:04d}', 'name': e['navn'],
          'ids': [f'{k:04d}' for k in e['kids']],
          'parts': [{'id': f'{p["kid"]:04d}', 'postalCodes': p['postnummer'], 'included': p['med']} for p in e.get('deler', [])]}
-        for kid, e in sorted(lineage_since_2008.items())])
+        for kid, e in sorted(lineage.items())])
 
     print(f'{len(events)} events in Posten\'s log from {min(e["date"] for e in events)}, {len(odd)} did not fit the state they met')
     print(f'{len(report)} earlier municipality ids are shared between today\'s municipalities by postal code')

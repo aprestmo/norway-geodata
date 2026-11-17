@@ -72,7 +72,7 @@ export interface LineagePart {
   readonly included: boolean;
 }
 
-/** Every municipality ID since 2008 that makes up a municipality of today. */
+/** Every municipality ID since 2003 that makes up a municipality of today. */
 export interface MunicipalityLineage {
   readonly id: string;
   readonly name: string;
@@ -157,7 +157,7 @@ export function getCountyChanges(): readonly AreaChange[] {
 }
 
 /**
- * The earlier IDs (since 2008) that make up a municipality of today.
+ * The earlier IDs (since 2003) that make up a municipality of today.
  * @param id - ID of a municipality of today, e.g. "3203" (Asker)
  */
 export function getMunicipalityLineage(id: string): MunicipalityLineage | undefined {

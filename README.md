@@ -191,7 +191,7 @@ getCurrentMunicipalityId('1507', '6270'); // '1580' (Brattvåg: Haram, part of �
 - `getCountyHistory(id)` / `getCountyHistories()` - The same for counties
 - `getMunicipalityNameAt(id, date)` / `getCountyNameAt(id, date)` - The name on a date
 - `getMunicipalityChanges()` / `getCountyChanges()` - Statistics Norway's list of changes (`succession`, `transfer`, `renamed`)
-- `getMunicipalityLineage(id)` - Every ID since 2008 that makes up a municipality of today
+- `getMunicipalityLineage(id)` - Every ID since 2003 that makes up a municipality of today
 - `getCurrentMunicipalityId(id, postalCode?)` - The municipality of today for an ID as it was at the time
 
 Dates are ISO strings. A period runs from `from` (inclusive) to `to` (exclusive); `null` means
@@ -204,7 +204,8 @@ except for one post box code where Posten's own register has a municipality ID t
 Posten keeps a postal code on one municipality only, so a postal code that crosses a border is listed
 on one side. Where an old municipality was divided (Snillfjord, Tysfjord, Stokke, Ålesund/Haram) or a
 border was moved (Rånåsfoss, Vågstranda and eight more), the lineage splits the old ID by postal code.
-Rebuild with `npm run build:history` (Python 3, standard library only).
+Rebuild with `npm run build:history` (Python 3, standard library only); a monthly workflow does it and opens a
+pull request when the sources have changed. See [PUBLISHING_GUIDE.md](PUBLISHING_GUIDE.md).
 
 ### Statistics Functions
 
