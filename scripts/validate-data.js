@@ -55,7 +55,12 @@ function main() {
   // Validate JSON files
   const municipalities = validateJsonFile(path.join(dataDir, 'municipalities-2025.json'));
   const counties = validateJsonFile(path.join(dataDir, 'counties-2025.json'));
-  const postalCodes = validateJsonFile(path.join(dataDir, 'postal-codes-2025.json'));
+  const postalCodes = validateJsonFile(path.join(dataDir, 'postal-codes-2026.json'));
+
+  // History files (built by scripts/build-history.py)
+  for (const name of ['postal-codes', 'municipalities', 'counties', 'municipality-changes', 'county-changes', 'municipality-lineage']) {
+    validateJsonFile(path.join(dataDir, 'history', `${name}.json`));
+  }
   
   // Validate data structures
   validateDataStructure(

@@ -13,6 +13,7 @@
 - 🔒 **TypeScript first** - Full type safety and IntelliSense support
 - 🚀 **Zero dependencies** - Lightweight and fast
 - 🔍 **Rich search API** - 25+ functions for filtering and statistics
+- 🕰️ **History** - Postal codes, municipalities and counties over time, from 2003
 - 📦 **Multiple registries** - Available on npm and GitHub Packages
 
 ## 📦 Installation
@@ -156,6 +157,55 @@ console.log(`Unique places: ${uniquePlaces.length}`);
 - `getPostalCodesSorted(ascending?: boolean)` - Get sorted postal codes
 - `getPostalCodesStats()` - Get postal codes statistics
 - `isValidPostalCode(code: string)` - Check if postal code exists
+
+### History Functions
+
+Postal codes, municipalities and counties over time, in a separate entry point so the
+history (1.3 MB) is only loaded when asked for:
+
+```ts
+import {
+  getPostalCodeAt,
+  getMunicipalityNameAt,
+  getCountyNameAt,
+  getMunicipalityLineage,
+  getCurrentMunicipalityId,
+} from '@aprestmo/norway-geodata/history';
+
+// Rånåsfoss lay in Sørum until 2020 and is Nes today
+getPostalCodeAt('1927', '2019-12-31'); // { place: 'Rånåsfoss', municipalityId: '0226', ... }
+getMunicipalityNameAt('0226', '2019-12-31'); // 'Sørum'
+getCountyNameAt('30', '2022-06-01'); // 'Viken'
+
+// Asker today is old Asker, Røyken and Hurum
+getMunicipalityLineage('3203')?.ids; // ['3203', '3025', '0628', '0627', '0220']
+
+// Which municipality of today does an old record belong to?
+getCurrentMunicipalityId('0627'); // '3203' (Røyken is Asker today)
+getCurrentMunicipalityId('1507', '6270'); // '1580' (Brattvåg: Haram, part of Ålesund 2020–2023)
+```
+
+- `getPostalCodeHistory(code)` / `getPostalCodeHistories()` - A postal code's periods: place, municipality ID and category
+- `getPostalCodeAt(code, date)` - What a postal code was on a date
+- `getMunicipalityHistory(id)` / `getMunicipalityHistories()` - The names a municipality ID has had, also IDs no longer in use
+- `getCountyHistory(id)` / `getCountyHistories()` - The same for counties
+- `getMunicipalityNameAt(id, date)` / `getCountyNameAt(id, date)` - The name on a date
+- `getMunicipalityChanges()` / `getCountyChanges()` - Statistics Norway's list of changes (`succession`, `transfer`, `renamed`)
+- `getMunicipalityLineage(id)` - Every ID since 2003 that makes up a municipality of today
+- `getCurrentMunicipalityId(id, postalCode?)` - The municipality of today for an ID as it was at the time
+
+Dates are ISO strings. A period runs from `from` (inclusive) to `to` (exclusive); `null` means
+before the data starts, or still valid. The raw files are also exported: `@aprestmo/norway-geodata/data/history/postal-codes` and so on.
+
+**Sources and limits.** Municipalities and counties come from Statistics Norway (Klass 131 and 104),
+from 2003-01-01. Postal codes come from Posten: today's register played backwards through Posten's
+log of every change since 2003-10-01. The result matches archived registers from 2019, 2020 and 2022,
+except for one post box code where Posten's own register has a municipality ID that does not exist.
+Posten keeps a postal code on one municipality only, so a postal code that crosses a border is listed
+on one side. Where an old municipality was divided (Snillfjord, Tysfjord, Stokke, Ålesund/Haram) or a
+border was moved (Rånåsfoss, Vågstranda and eight more), the lineage splits the old ID by postal code.
+Rebuild with `npm run build:history` (Python 3, standard library only); a monthly workflow does it and opens a
+pull request when the sources have changed. See [PUBLISHING_GUIDE.md](PUBLISHING_GUIDE.md).
 
 ### Statistics Functions
 

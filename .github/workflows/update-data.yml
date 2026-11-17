@@ -1,0 +1,65 @@
+name: Update Data
+
+# Rebuilds the postal codes and the history from Posten and Statistics Norway and opens a
+# pull request when something has changed. Publishing stays manual: see PUBLISHING_GUIDE.md.
+on:
+  schedule:
+    - cron: '0 5 2 * *' # 05:00 UTC on the 2nd of every month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rebuild data
+        run: python3 scripts/build-history.py
+
+      - name: Stop when nothing changed
+        id: diff
+        run: |
+          if git diff --quiet -- data; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes in the sources."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- data
+          fi
+
+      # A pull request opened by a workflow does not start the other workflows,
+      # so the checks run here, before the pull request exists.
+      - name: Validate and test
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          npm ci --ignore-scripts
+          npm run validate
+          npm test
+
+      - name: Open pull request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch="chore/data-$(date -u +%Y-%m-%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add data
+          git commit -m "chore: update data from Posten and SSB"
+          git push origin "$branch"
+          gh pr create --title "chore: update data from Posten and SSB" --body "$(cat <<'BODY'
+          Rebuilt by `scripts/build-history.py`. Validation and tests passed in the workflow run.
+
+          Look through the diff, merge, and release a new version when the change matters to users
+          (see PUBLISHING_GUIDE.md).
+          BODY
+          )"

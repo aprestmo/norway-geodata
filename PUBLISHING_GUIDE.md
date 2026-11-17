@@ -1,5 +1,55 @@
 # 📦 Publishing Guide
 
+## 🔄 Updating the Data
+
+Two things in the package come straight from official sources and are rebuilt by one command:
+
+```bash
+npm run build:history   # python3 scripts/build-history.py (Python 3, standard library only)
+```
+
+| File | Source |
+| --- | --- |
+| `data/postal-codes-2026.json` (today's postal codes, read by the main entry point) | Posten's postal code register |
+| `data/history/*.json` (postal codes, municipalities and counties over time) | Posten's change log from 2003-10-01, Statistics Norway Klass 131 and 104 |
+
+The script fetches everything on every run and writes the same files when nothing has changed,
+so `git diff data` shows exactly what Posten or Statistics Norway changed.
+
+**When.** The workflow `Update Data` runs the script on the 2nd of every month and opens a pull
+request when the data has changed. It can also be started by hand (Actions → Update Data → Run
+workflow). Posten changes postal codes a few times a year, mostly on 1 October; municipalities and
+counties change on 1 January.
+
+**What to look at in the pull request.**
+
+- A handful of added, removed or renamed postal codes is normal.
+- Hundreds of changed municipality IDs means a municipal reform. Then also update what the script
+  does not: `data/municipalities-2025.json` and `data/counties-2025.json` (population, area, URLs,
+  the postal codes listed per municipality) are maintained by hand, and
+  `scripts/test-history.js` checks facts that a reform can change.
+- The script prints how many events in Posten's log «did not fit the state they met» (71 in
+  November 2026). A jump in that number means the format of the log has changed.
+
+**Not rebuilt by the script.** `data/municipalities-2025.json` and `data/counties-2025.json`.
+The postal codes listed inside each municipality there can therefore lag behind
+`data/postal-codes-2026.json`.
+
+## 🚢 Releasing a Data Update
+
+1. Merge the pull request to `main` and pull.
+2. `npm run version:minor` (new data or features) or `npm run version:patch` (fixes).
+3. Commit the version: `git commit -am "chore: release v$(node -p "require('./package.json').version")"`.
+4. `npm run publish:npm` (needs `npm login` as an owner of the package). It validates, builds and
+   tests first, and refuses a version that is already published.
+5. `git tag v$(node -p "require('./package.json').version") && git push && git push --tags`.
+
+Commit before you publish. Version 0.1.5 was published from changes that were never committed, so
+the repository was behind npm until 0.2.0.
+
+Projects that use the package get the new data with `npm update @aprestmo/norway-geodata`
+(or the pnpm/yarn equivalent) and a new deploy. Nothing reaches them before that.
+
 ## 🎯 Manual Publishing (Recommended)
 
 This project uses manual publishing instead of auto-publish for better control over releases.
